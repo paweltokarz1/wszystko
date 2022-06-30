@@ -1,0 +1,760 @@
+// Program pobiera znaki z standardowego wejœcia i dopisuje je do pliku
+#include <stdio.h>
+#include <stdlib.h>
+int main(void)
+{
+    FILE *fp;
+    int ch;
+    if ((fp = fopen("temp.txt", "a" )) == NULL)  // otwarcie pliku tekstowego w trybie do dopisywania
+    {
+        printf ("Blad otwarcia pliku!!! ");
+        exit(1);
+    }
+    printf("\nWprowadz nowe znaki: ");
+	//zasymuluj znak EOF wciskaj¹c  enter (zwolnienie bufora) 
+	//oraz kombinacjê klawiszy Ctrl+Z  
+    while ((ch = fgetc(stdin)) != EOF)
+        fputc(ch, fp);
+
+    fclose(fp);
+    return 0;
+}
+
+
+// Program ilustruj¹cy swobodne "poruszanie" siê po pliku.
+// Wyœwietla zwartoœæ pliku w odwrotnej kolejnoœci zamieniaj¹ ma³e litery na du¿e.
+
+#include <stdio.h>
+#include <stdlib.h>         
+#include <ctype.h>
+#define CNTL_Z '\032'		// znacznik EOF w plikach tekstowych WINDOWS
+int main(void)
+{
+	char ch;
+	FILE *file;
+	long count, end;
+	// tryb binarny tylko do odczytu
+	if ((file = fopen("persons.txt", "rb")) == NULL)
+	{
+		printf("Nie moge otworzyc pliku %s\n", file);
+		exit(1);
+	}
+
+	fseek(file, 0L, SEEK_END);// przejdŸ do koñca pliku
+	end = ftell(file);
+
+	for (count = 1L; count <= end; count++)
+	{
+		fseek(file, -count, SEEK_END);	// idŸ do ty³u
+		ch = fgetc(file);
+		
+		if (ch != CNTL_Z && ch != '\r') // znaki obecne w pliku w sytemie WINDOWS
+			putchar(toupper(ch));
+	}
+	putchar('\n');
+	fclose(file);
+	return 0;
+}
+
+
+
+
+
+//odczyt danych z pliku
+
+// Pliki tekstowe
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(void){
+   
+/*(1) SprawdŸ dzia³anie programu*/
+
+FILE *plik;
+  
+ int m;
+  if ((plik = fopen("DANE.txt", "r" )) == NULL)
+    {
+        fprintf(stderr,"Blad otwarcia pliku!!!");
+        exit(1);
+    }
+   
+
+//czytanie danych z pliku tekstowego
+  while (fscanf(plik, "%d", &m)==1)
+            printf ("%d\n", m);
+
+  
+  
+fclose(plik);
+  
+
+   
+return 0;
+}
+
+
+//odczytanie i zapisanie roznych info less30 co druga liczba
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>// Pliki tekstowe
+#include <time.h>
+
+int main(void){
+   
+/*(1) SprawdŸ dzia³anie programu*/
+
+FILE *plik, *nowy_plik;
+  
+ int m,z,n, suma=0, i=1;
+  if ((plik = fopen("DANE.txt", "r" )) == NULL)
+    {
+        fprintf(stderr,"Blad otwarcia pliku!!!");
+        exit(1);
+    }
+    if ((nowy_plik=fopen("WYNIKI.TXT","w"))==NULL) { 
+      fprintf(stderr, "\nNie mozna otworzyc pliku do zapisu.\n");  
+      exit(EXIT_FAILURE);
+  }
+   fscanf(plik, "%d", &m);
+   
+   while (fscanf(plik, "%d", &m )==1){
+	   if(m<30){
+	
+	fprintf(nowy_plik,"%d ", m);
+	
+}
+}
+
+fprintf(nowy_plik,"\n");
+fseek(plik,0,SEEK_SET);
+
+while (fscanf(plik, "%d", &z )==1){
+	if(i%2==1){
+		fprintf(nowy_plik,"%d ", z);
+	}
+	i++;
+}
+
+
+fprintf(nowy_plik,"\n");
+fseek(plik,0,SEEK_SET);
+
+while (fscanf(plik, "%d", &n )==1){
+	suma +=n;
+	
+	
+}
+fprintf(nowy_plik,"%d ", suma);
+  
+fclose(plik);
+fclose(nowy_plik);
+  
+
+   
+return 0;
+}
+
+
+//liczby parzyste po poprzedniej liczbie
+
+// Pliki tekstowe
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(void){
+   
+/*(1) SprawdŸ dzia³anie programu*/
+
+FILE *plik, *nowy_plik;
+  
+ int m, count=1, holder;
+ 
+ //otwarcie pliku do czytania
+  if ((plik = fopen("DANE.txt", "r" )) == NULL)
+    {
+        fprintf(stderr,"Blad otwarcia pliku!!!");
+        exit(1);
+    }
+    
+//otwarcie pliku do zapisu    
+    if ((nowy_plik=fopen("WYNIKI.TXT","w"))==NULL) { 
+      fprintf(stderr, "\nNie mozna otworzyc pliku do zapisu.\n");  
+      exit(EXIT_FAILURE);
+  }
+  
+  
+  
+   fscanf(plik, "%d", &m);
+   holder = m;
+   
+   while (fscanf(plik, "%d", &m)==1){
+	   if(m%2==0){
+	
+	fprintf(nowy_plik,"%d:%d\n ", count, holder);
+	count++;
+}
+holder = m;
+}
+
+  
+  
+fclose(plik);
+fclose(nowy_plik);
+  
+
+   
+return 0;
+}
+
+
+//kopiowanie do pliku zamiana na duze litery
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define FILE_NAME_IN "text.txt"
+#define FILE_NAME_OUT "text_out.txt"
+int main(void)
+{
+    FILE *fp_in, *fp_out;
+
+    fp_in  = fopen(FILE_NAME_IN, "r"); //otwarcie pliku w trybie tekstowym do odczytu
+    fp_out = fopen(FILE_NAME_OUT, "w"); //otwarcie pliku w trybie tekstowym do zapisu
+
+    if (fp_in == NULL)
+    {
+        printf("Nie mozna otworzyc pliku %s\n", FILE_NAME_IN);
+        exit(EXIT_FAILURE); 
+
+    }
+    if (fp_out == NULL)
+    {
+        printf("Nie mozna otworzyc pliku %s\n", FILE_NAME_OUT);
+        exit(EXIT_FAILURE); 
+    }
+    
+    {
+        int ch;     // mo¿e to byæ te¿ char ch;
+        // odczytujemy plik znak po znaku zamieniaj¹c ma³e litery na du¿e
+        // i zapsiujemy je do nowgo pliku
+        while((ch = fgetc(fp_in)) != EOF)
+        {
+           fputc(toupper(ch), fp_out);
+        }
+        printf("Kopiowanie zakonczone!");
+    }
+
+
+    fclose(fp_in);
+    fclose(fp_out);
+    return 0;
+}
+
+
+//ilosc linii znakow w pliku podany przez uzytkownika
+
+// Pliki tekstowe
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(void){
+	
+	FILE *plik_r, *plik_rb;
+   	char nazwa[10];
+    printf("Podaj nazwe pliku: ");
+    gets(nazwa);
+    plik_r = fopen(nazwa, "r");
+    plik_rb = fopen(nazwa, "rb");
+    
+    int znaki=0, linie=0;
+    
+    char ch;    
+
+//ilosc wierszy i znakow w pliku
+        while((ch = fgetc(plik_r)) != EOF)
+        {
+        	znaki++;
+           if(ch == '\n' || ch == '\0')
+           linie++;
+        }
+        printf("Ilosc znakow to: %d\n", znaki);
+        if(ch != 0 && linie == 0)
+        linie= 1;
+        printf("Ilosc lini to: %d\n", linie);
+       
+       fclose(plik_r);
+       fclose(plik_rb);
+    
+    
+
+   
+return 0;
+}
+
+
+//parametry programu
+
+// Argumenty wywo³ania programu
+
+#include <stdio.h>
+#define P1
+
+void linia(int);
+ 
+int main(int argc, char *argv[]){
+
+/*(1) Sprawdziæ dzia³anie programu dla P1, P2, P3*/ 
+
+#ifdef P1
+linia(1);
+//Przyklad 1 ////////////////////////////////////////////
+
+int i;
+printf("Parametry programu:\n");
+for (i=0;i<=argc;i++)
+  printf("\n %d: %s\n",i, argv[i]);
+#endif
+
+//Przyklad 2 //////////////////////////////////////////
+#ifdef P2
+linia(2);
+printf("Parametry programu:\n");
+while(argc>0){
+   printf("%s\n",*argv);
+   argc--;
+   argv++;
+} 
+#endif
+
+//Przyklad 3 ////////////////////////////////////////////
+#ifdef P3
+linia(3);
+printf("Parametry programu:\n");
+while( *++argv !=NULL)
+  printf("%s\n",*argv);    
+#endif 
+
+return 0;
+}
+
+void linia(int k){
+if (k>0) printf("\n\n______________ %d ________________\n\n",k);
+else printf("\n\n___________________________________\n\n");
+}
+
+
+/* Program wyszukuje w pliku o podanej nazwie wiersze, które
+zawieraj¹ podan¹ frazê oraz wypisuje te wiersze na ekran. */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SIZE 100
+char *my_gets_s(char *str, int n);
+int main(void)
+{
+    FILE *fp;
+
+    char line[SIZE], word[SIZE], file_name[40];
+    printf ("Podaj nazwe pliku do odczytu: ");
+    my_gets_s(file_name, 40);       // wpisz np. text.txt
+
+    if ((fp = fopen (file_name, "r")) == NULL)
+    {
+        fputs("Blad otwarcia pliku!!!\n", stderr);
+        exit(1);
+    }
+
+    printf ("Podaj szukany napis: ");
+    my_gets_s(word, SIZE);
+
+    while (fgets(line, SIZE, fp) != NULL)
+    {
+        if (strstr (line, word) != NULL)
+        fputs(line, stdout); // wypisuje linie na standardowe wyjœcie
+    }
+
+    fclose(fp);
+    return 0;
+}
+char *my_gets_s(char *str, int n)
+{
+	char * p;
+	int i = 0;
+	p = fgets(str, n, stdin);           // korzystamy z funkcji fgets, stdin - standardowe wejœcie np. klawiatura
+	if (p) // to siê nie wykona jezeli p != NULL
+	{
+		while (str[i] != '\n' && str[i] != '\0')
+			i++;
+		if (str[i] == '\n')
+			str[i] = '\0';
+		else // gdy str[i] == '\0'
+			while (getchar() != '\n') // czyszczenie bufora
+				continue;
+	}
+	return p;
+}
+
+
+
+// U¿ycie funkcji fread i fwrite, ilustracja dok³adnoœci zapisu 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+int main(void)
+{
+    FILE *file;
+    char *file_name = "pi.dat";
+    double pi = 2*acos(0);
+
+    if ((file = fopen(file_name , "wb")) == NULL)
+    {
+        fprintf(stderr, "Blad otwarcia pliku %s do zapisu\n", file_name );
+        exit(1);
+    }
+
+    // zapis liczby pi w postaci takiej jak¹ wyœwietla j¹ specyfikator %f (domyœlnie 6 miejsc po przecinku)
+    fprintf (file, "%3f", pi);      //fprintf(file, "%.15f", pi ); - trzeba ustalaæ dok³adnoœæ
+
+    // zapis liczby pi w z u¿yciem funkcji fwrite
+    fwrite (&pi, sizeof(pi), 1, file) ;
+
+    if (fclose(file) != 0)
+		printf("Blad zamkniecia pliku!\n");
+
+
+    if ((file = fopen(file_name , "rb")) == NULL)
+    {
+        fprintf(stderr, "Blad otwarcia pliku %s do odczytu\n", file_name );
+        exit(1);
+    }
+
+
+    // odczyt liczby pi zapisanej przez fprintf
+    fscanf (file, "%lf", &pi);
+    fprintf(stdout, "(fprintf) pi= %.15f\n", pi);
+
+    // odczyt liczby pi zapisanej przez fwrite
+    fread (&pi, sizeof (pi), 1, file);
+    fprintf (stdout, "(fwrite) pi= %.15f\n", pi);
+    fclose (file);
+
+return 0;
+}
+
+
+
+// Program wypisuje argumenty wiersza poleceñ.
+// Skompilowany program nale¿y uruchomiæ z wiersza poleceñ wpisuj¹c (na przyk³ad):
+// przyklad_8.exe poniedzialek wtorek sroda czwartek piatek sobota niedziela
+#include <stdio.h>
+int main(int argc, char *argv[])
+{
+
+    for(int i = 0; i < argc; i++)
+        if (i == 0)
+        {
+            printf("Nazwa programu: %s\n", argv[i]);
+            printf("Pozostale argumenty:\n");
+        }
+        else
+            printf("%d: %s\n", i, argv[i]);
+
+
+	return 0;
+}
+
+
+//Program wypisuje kolejno  na standardowe wyjœcie pliki, 
+//których nazwy   przekazywane s¹ jako argumenty do funkcji main().
+#include<stdio.h>
+#include<stdlib.h>
+void filecopy(FILE *,FILE * );
+
+int main(int argc, char *argv[]){
+ 
+FILE *fp;
+char *program = argv[0];
+
+if (argc==1)
+ 	filecopy(stdin, stdout);
+ 
+else {
+		while(--argc>0){
+   		if ((fp=fopen(*++argv,"r"))==NULL) { 
+    		fprintf(stdout,"%s:nie mo¿na otworzyc: %s",   program, *argv);
+    		exit(1);
+    		}
+   		filecopy(fp, stdout);
+        printf("\n********************************************************\n");
+   		fclose(fp); 
+  		} 
+	} 
+   
+return 0;
+}
+
+void filecopy(FILE *ifp, FILE *ofp ){
+	int c;
+	while((c=fgetc(ifp))!=EOF)
+		fputc(c,ofp);
+}
+
+
+//szukanie slowa z parametru
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+int main(int argc, char *argv[]){
+	
+	FILE *plik;
+	char line[100];
+	int i = 1;
+	
+	if(argc!=3){
+  	fprintf(stderr, "\nUWAGA nie podano argumentow.\nWywolaj z parametrami:\n%s \t1:nazwa pliku 1 \t2:nazwa pliku 2\n\n", argv[0]);           
+  	exit(1);
+  }
+  
+  if((plik=fopen(argv[1],"r"))==NULL){ 
+  fprintf(stdout,"\nNie mo¿na otworzyc pliku: %s", argv[1]);
+  exit(2);
+  }
+  
+  printf("\nPlik %s otwarty do odczytu.\n", argv[1]);
+  
+  while (fgets(line, 99, plik) != NULL)
+    {
+        if (strstr (line, argv[2]) != NULL){
+		printf("%d ", i);
+        fputs(line, stdout); 
+		}// wypisuje linie na standardowe wyjœcie
+		i++;
+    }
+  
+  
+  
+  if(fclose(plik)!=0)
+   fprintf(stderr, "Blad zamkniecia pliku %s.\n", *(argv+1));           
+
+
+
+
+return 0;
+	
+}
+
+
+//odczyt tablicy poprzez podanie inedksu 
+
+// Program ilustrujacy swobodne "poruszanie" sie po pliku binarym 
+//oraz u¿ycie funkcji fread i fwrite
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 10
+int main(void)
+{
+	double numebrs[SIZE];
+	double value;
+	const char *file_name = "numbers.dat";
+	int i;
+	long position;
+	FILE *file;
+	/* tworzy tablice wartosci typu double */
+	for (i = 0; i < SIZE; i++)
+		numebrs[i] = 50 * (i*i) + (1.0 * 2 * i)/(i+1);
+
+	// wyœwietlamy nasz¹ tablicê w celach kontrolnych:
+	printf("-----------Tablica:-------------\n");
+    for(i = 0; i < SIZE; i++)
+        printf("[%d] %10.2f\n", i, numebrs[i]);
+    printf("-------------------------------\n");
+
+
+	if ((file = fopen(file_name , "wb")) == NULL)
+	{
+		fprintf(stderr, "Blad otwarcia pliku %s do zapisu\n", file_name );
+		exit(1);
+	}
+
+	/* zapisuje tablice do pliku w formacie binarnym	*/
+	fwrite(numebrs, sizeof(double), SIZE , file);
+
+	if (fclose(file) != 0)
+		printf("Blad zamkniecia pliku!\n");
+//-------------------------------------------------------------
+	if ((file = fopen(file_name, "rb")) == NULL)
+	{
+		fprintf(stderr,
+			 "Blad otwarcia pliku %s do dostepu swobodnego\n", file_name);
+		exit(1);
+	}
+	/* odczytuje z pliku wybrane pozycje */
+	printf("Podaj indeks z przedzialu 0-%d.\n", SIZE -1);
+	scanf("%d", &i);
+	while (i >= 0 && i < SIZE)
+	{
+		position = (long) i * sizeof(double);	// oblicza pozycje
+		fseek(file, position, SEEK_SET);		// przechodzi w odpowiednie miejsce
+		fread(&value, sizeof(double), 1, file);
+		printf("Wartosc pod tym indeksem to %10.2f\n", value);
+		printf("Kolejny indeks (wyjscie poza przedzial konczy program):\n");
+		scanf("%d", &i);
+	}
+	if (fclose(file) != 0)
+		printf("Blad zamkniecia pliku!\n");
+	return 0;
+}
+
+
+
+//wypisanie liczb parzystych z pliku
+
+//Program wczytuje liczby z pliku random_int.txt i wypisuje tylko parzyste.
+
+#include <stdio.h>
+#include <stdlib.h>
+int main(void)
+{
+    FILE *fp;
+    int m;
+    if ((fp = fopen("random_int.txt", "r" )) == NULL)
+    {
+        fprintf(stderr,"Blad otwarcia pliku!!!");
+        exit(1);
+    }
+
+    while (fscanf(fp, "%d", &m) == 1)
+        if (m % 2 == 0)
+            printf ("%d\n", m);
+
+    fclose(fp);
+    return 0;
+}
+
+
+/* Program wyszukuje w pliku o podanej nazwie wiersze, które
+zawieraj¹ podan¹ frazê oraz wypisuje te wiersze na ekran. */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SIZE 100
+char *my_gets_s(char *str, int n);
+int main(void)
+{
+    FILE *fp;
+
+    char line[SIZE], word[SIZE], file_name[40];
+    printf ("Podaj nazwe pliku do odczytu: ");
+    my_gets_s(file_name, 40);       // wpisz np. text.txt
+
+    if ((fp = fopen (file_name, "r")) == NULL)
+    {
+        fputs("Blad otwarcia pliku!!!\n", stderr);
+        exit(1);
+    }
+
+    printf ("Podaj szukany napis: ");
+    my_gets_s(word, SIZE);
+
+    while (fgets(line, SIZE, fp) != NULL)
+    {
+        if (strstr (line, word) != NULL)
+        fputs(line, stdout); // wypisuje linie na standardowe wyjœcie
+    }
+
+    fclose(fp);
+    return 0;
+}
+char *my_gets_s(char *str, int n)
+{
+	char * p;
+	int i = 0;
+	p = fgets(str, n, stdin);           // korzystamy z funkcji fgets, stdin - standardowe wejœcie np. klawiatura
+	if (p) // to siê nie wykona jezeli p != NULL
+	{
+		while (str[i] != '\n' && str[i] != '\0')
+			i++;
+		if (str[i] == '\n')
+			str[i] = '\0';
+		else // gdy str[i] == '\0'
+			while (getchar() != '\n') // czyszczenie bufora
+				continue;
+	}
+	return p;
+}
+
+
+//zmiana na wielkie litery
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define FILE_NAME "text.txt"
+int main(void)
+{
+    FILE *fp;
+
+    fp  = fopen(FILE_NAME, "r"); //otwarcie pliku w trybie tekstowym do odczytu
+    if (fp == NULL)
+    {
+        printf("Nie mozna otworzyc pliku %s\n", FILE_NAME);
+        exit(EXIT_FAILURE); // lub exit(1);
+    }
+    
+   
+        char ch;    
+        // odczytujemy plik znak po znaku zamieniaj¹c ma³e litery na du¿e
+        while((ch = fgetc(fp)) != EOF)
+        {
+           putchar(toupper(ch));
+        }
+
+
+    fclose(fp);
+    return 0;
+}
+
+//zapis do pliku liczb
+
+// Pliki tekstowe
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(void){
+   
+/*(1) SprawdŸ dzia³anie programu*/
+
+FILE *plik;
+  //otwarcie pliku do zapisu
+ if ((plik=fopen("DANE.TXT","w"))==NULL) { 
+      fprintf(stderr, "\nNie mozna otworzyc pliku do zapisu.\n");  
+      exit(EXIT_FAILURE);
+  }
+   
+  int i;
+  srand((unsigned int)time(0));
+
+  for (i=0;i<20;i++) 
+     fprintf(plik,"%d ", rand()%100); //wpisanie liczb
+  
+fclose(plik);
+  
+printf("\nWylosowane liczby zapisano w pliku DANE.TXT. Sprawdz jego zawartosc.\n");
+   
+return 0;
+}
+
+
+
